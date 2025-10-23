@@ -49,16 +49,37 @@
 
           <!-- Action Buttons -->
           <div class="tw-flex tw-items-center tw-gap-1">
+            <div v-if="currentUser" class="tw-flex">
+            <q-icon name="mdi-account-circle" size="24px" class="tw-mr-2"/>
+              {{currentUser?.name}}
+            </div>
             <q-btn
+                v-if="!currentUser"
                 flat
                 no-caps
                 class="action-btn tw-hidden md:tw-flex tw-text-white hover:tw-bg-white/20"
                 padding="sm md"
+                @click="openLoginDialog = true"
             >
               <q-icon name="mdi-account-circle" size="24px" class="tw-mr-2"/>
               <span class="tw-font-medium">Login</span>
               <q-tooltip class="tw-bg-blue-grey-8">Sign in to your account</q-tooltip>
             </q-btn>
+
+            <q-btn
+                v-else
+                flat
+                no-caps
+                class="action-btn tw-hidden md:tw-flex tw-text-white hover:tw-bg-white/20"
+                padding="sm md"
+                @click="logoutUser"
+            >
+              <q-icon name="mdi-logout" size="24px" class="tw-mr-2"/>
+              <span class="tw-font-medium">Logout</span>
+              <q-tooltip class="tw-bg-blue-grey-8">Log Out</q-tooltip>
+            </q-btn>
+
+
 
             <q-btn
                 flat
@@ -241,6 +262,8 @@
       </q-list>
     </q-drawer>
   </q-layout>
+
+  <login v-model="openLoginDialog" />
 </template>
 
 <script setup>
@@ -248,6 +271,12 @@ import {onMounted, ref, watch} from 'vue'
 import {useCategoryStore} from "stores/categoryStore.js";
 import {storeToRefs} from "pinia";
 import {useRouter} from "vue-router";
+import Login from "components/Login/Login.vue";
+import {useAuthStore} from "stores/authStore.js";
+import {useQuasar} from "quasar";
+
+const authStore = useAuthStore();
+const {currentUser} = storeToRefs(authStore)
 
 const mobileMenuOpen = ref(false)
 
@@ -255,9 +284,11 @@ const categoryStore = useCategoryStore();
 const {categories} = storeToRefs(categoryStore)
 const allCategories = ref([])
 const router = useRouter()
+const openLoginDialog = ref(false)
 
 onMounted(() => {
   categoryStore.fetchCategories()
+  authStore.validateToken()
 })
 
 watch(() => categories.value,
@@ -275,6 +306,36 @@ const redirectToDetails = (category) => {
   categoryStore.fetchParentChildrenCategories(category.slug)
 
 }
+const $q = useQuasar()
+const logoutUser = async () => {
+  try {
+    $q.dialog({
+      title: 'Logout',
+      message: 'Are you sure you want to logout',
+      cancel: {
+        label: 'Cancel',
+        color: 'grey-7',
+        flat: true
+      },
+      ok: {
+        label: 'Logout',
+        color: 'negative',
+        unelevated: true,
+      },
+      persistent: true,
+    }).onOk(async () => {
+      await authStore.logout()
+    })
+  } catch (e) {
+    $q.notify({
+      message: e?.message || 'An error occurred',
+      color: 'negative',
+      icon: 'mdi-alert-circle',
+      position: 'top'
+    })
+  }
+}
+
 </script>
 
 <style scoped>
