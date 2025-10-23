@@ -38,17 +38,6 @@ export const useCategoryStore = defineStore('categoryStore', () => {
         }
     }
 
-
-    const fetchCategoryById = async (id) => {
-        try {
-            const response = await publicApi.get('categories/' + id)
-            return response.data
-        } catch (e) {
-            console.error(e)
-            throw e.response?.data?.message || 'Failed to fetch Category';
-        }
-    }
-
     const fetchCategoryProducts = async (slug) => {
         categoryProducts.value = []
         categoryChildrens.value = []
@@ -83,7 +72,6 @@ export const useCategoryStore = defineStore('categoryStore', () => {
     return {
         fetchCategories,
         categories,
-        fetchCategoryById,
         tableParams,
         fetchCategoryProducts,
         categoryProducts,

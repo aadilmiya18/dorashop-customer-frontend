@@ -1,5 +1,8 @@
 <template>
-  <div class="tw-group tw-w-full tw-bg-white tw-rounded-2xl tw-shadow-md hover:tw-shadow-2xl tw-overflow-hidden tw-transition-all tw-duration-300 hover:tw-scale-[1.02]">
+  <div
+      @click="$router.push({name: 'ProductDetailsPage', params:{slug:item?.slug}})"
+      class="tw-group tw-w-full tw-bg-white tw-rounded-2xl tw-shadow-md hover:tw-shadow-2xl tw-overflow-hidden tw-transition-all tw-duration-300 hover:tw-scale-[1.02]"
+  >
     <!-- Image Container -->
     <div class="tw-relative tw-h-[280px] tw-bg-gradient-to-br tw-from-gray-50 tw-to-gray-100 tw-overflow-hidden">
       <q-img

@@ -11,14 +11,12 @@ const routes = [
                 path: '/category/:slug',
                 name: 'CategoryDetailsPage',
                 component: () => import('pages/CategoryDetailsPage.vue'),
-                children: [
-                    // {
-                    //     path: '',
-                    //     name: 'CategoryProductsPage',
-                    //     component: () => import('pages/CategoryProductsPage.vue'),
-                    // }
-                ]
-            }
+            },
+            {
+                path: '/product/:slug',
+                name: 'ProductDetailsPage',
+                component: () => import('pages/ProductDetailsPage.vue'),
+            },
         ]
     },
 
