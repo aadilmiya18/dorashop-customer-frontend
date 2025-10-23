@@ -6,7 +6,10 @@
         <div
             class="tw-flex tw-justify-between tw-items-center tw-px-8 lg:tw-px-16 tw-py-4 tw-max-w-[1600px] tw-mx-auto">
           <!-- Logo Section -->
-          <div class="tw-flex tw-items-center tw-gap-4 tw-cursor-pointer tw-group">
+          <div
+              @click="$router.push('/')"
+              class="tw-flex tw-items-center tw-gap-4 tw-cursor-pointer tw-group"
+          >
             <q-avatar size="60px"
                       class="tw-transition-all tw-duration-300 group-hover:tw-scale-150 group-hover:tw-rotate-3 tw-bg-white tw-shadow-lg">
               <img
