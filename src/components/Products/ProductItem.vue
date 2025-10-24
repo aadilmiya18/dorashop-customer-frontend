@@ -12,7 +12,7 @@
       >
         <template v-slot:error>
           <div class="tw-flex tw-items-center tw-justify-center tw-h-full tw-w-full tw-bg-gray-100">
-            <q-icon name="mdi-image-off" size="48px" color="grey-4" />
+            <q-icon name="mdi-image-off" size="48px" color="grey-4"/>
           </div>
         </template>
       </q-img>
@@ -53,12 +53,12 @@
         <span class="tw-text-2xl tw-font-bold tw-text-primary">
           Rs. {{ item?.price }}
         </span>
-<!--        <span v-if="item?.originalPrice" class="tw-text-sm tw-text-gray-400 tw-line-through">-->
-<!--          Rs. {{ item?.originalPrice }}-->
-<!--        </span>-->
-<!--        <span v-if="item?.discount" class="tw-ml-auto tw-bg-green-100 tw-text-green-700 tw-px-2 tw-py-1 tw-rounded-md tw-text-xs tw-font-semibold">-->
-<!--          {{ item?.discount }}% OFF-->
-<!--        </span>-->
+        <!--        <span v-if="item?.originalPrice" class="tw-text-sm tw-text-gray-400 tw-line-through">-->
+        <!--          Rs. {{ item?.originalPrice }}-->
+        <!--        </span>-->
+        <!--        <span v-if="item?.discount" class="tw-ml-auto tw-bg-green-100 tw-text-green-700 tw-px-2 tw-py-1 tw-rounded-md tw-text-xs tw-font-semibold">-->
+        <!--          {{ item?.discount }}% OFF-->
+        <!--        </span>-->
       </div>
 
       <!-- Action Buttons -->
@@ -69,6 +69,7 @@
             unelevated
             class="tw-flex-1 tw-h-[44px] tw-rounded-xl tw-font-medium"
             icon-right="mdi-cart-plus"
+            @click.stop="addToCart"
         >
           <q-tooltip class="tw-bg-blue-grey-8">Add to cart</q-tooltip>
         </q-btn>
@@ -79,10 +80,26 @@
 </template>
 
 <script setup>
+import {useCartStore} from "stores/cartStore.js";
+
 const props = defineProps({
   item: {
     type: Object,
     default: () => ({})
   }
 });
+
+const cartStore = useCartStore();
+
+const addToCart = async () => {
+  const payload = {
+    "product_id": props.item.id,
+    "quantity": props.item.quantity,
+    "price": props.item.price
+  }
+
+  await cartStore.addItemsToCart(payload)
+  await cartStore.fetchCart();
+
+}
 </script>

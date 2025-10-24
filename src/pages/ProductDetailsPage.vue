@@ -128,6 +128,7 @@
                 class="tw-flex-1 tw-py-4 tw-text-lg tw-font-semibold tw-rounded-xl tw-shadow-lg hover:tw-shadow-xl tw-transition-all"
                 :disable="quantity === 0 || currentProduct?.stock === 0"
                 unelevated
+                @click="addToCart"
             />
             <q-btn
                 icon="mdi-heart-outline"
@@ -148,12 +149,16 @@ import {useProductStore} from "stores/productStore.js";
 import {computed, onMounted, ref} from "vue";
 import {useRoute} from "vue-router";
 import {storeToRefs} from "pinia";
+import {useCartStore} from "stores/cartStore.js";
 
 const quantity = ref(0)
 const showCaseImage = ref('')
 
+const cartStore = useCartStore();
+
 const productStore = useProductStore()
 const {currentProduct} = storeToRefs(productStore)
+
 const route = useRoute()
 const productSlug = computed(() => route.params.slug)
 
@@ -161,4 +166,16 @@ onMounted(async () => {
   await productStore.fetchProductDetails(productSlug.value)
   showCaseImage.value = currentProduct.value.media?.[0]?.url
 })
-</script>currentProduct?.media?.[0]?.url
+
+const addToCart = async () => {
+  const payload = {
+    "product_id": currentProduct.value.id,
+    "quantity": quantity.value,
+    "price": currentProduct.value.price
+  }
+
+  await cartStore.addItemsToCart(payload)
+  await cartStore.fetchCart();
+
+}
+</script>

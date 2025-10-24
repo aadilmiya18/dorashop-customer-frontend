@@ -52,7 +52,7 @@
 
           <!-- Action Buttons -->
           <div class="tw-flex tw-items-center tw-gap-1">
-            <div v-if="currentUser" class="tw-flex">
+            <div v-if="currentUser" class="tw-flex tw-items-center">
             <q-icon name="mdi-account-circle" size="24px" class="tw-mr-2"/>
               {{currentUser?.name}}
             </div>
@@ -89,6 +89,7 @@
                 no-caps
                 class="action-btn tw-relative tw-text-white hover:tw-bg-white/20"
                 padding="sm md"
+                @click="$router.push({name: 'AddToCartPage'})"
             >
               <q-badge
                   color="red-6"
@@ -96,7 +97,7 @@
                   rounded
                   class="tw-font-bold"
               >
-                3
+                {{cart?.length}}
               </q-badge>
               <q-icon name="mdi-cart" size="24px" class="tw-mr-2"/>
               <span class="tw-font-medium tw-hidden md:tw-inline">Cart</span>
@@ -277,9 +278,13 @@ import {useRouter} from "vue-router";
 import Login from "components/Login/Login.vue";
 import {useAuthStore} from "stores/authStore.js";
 import {useQuasar} from "quasar";
+import {useCartStore} from "stores/cartStore.js";
 
 const authStore = useAuthStore();
 const {currentUser} = storeToRefs(authStore)
+
+const cartStore = useCartStore();
+const {cart} = storeToRefs(cartStore);
 
 const mobileMenuOpen = ref(false)
 
@@ -292,6 +297,7 @@ const openLoginDialog = ref(false)
 onMounted(() => {
   categoryStore.fetchCategories()
   authStore.validateToken()
+  cartStore.fetchCart()
 })
 
 watch(() => categories.value,
