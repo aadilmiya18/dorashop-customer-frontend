@@ -284,17 +284,23 @@ import {useCartStore} from "stores/cartStore.js";
 import {storeToRefs} from "pinia";
 import {onMounted, computed, ref} from "vue";
 import {useQuasar} from "quasar";
+import {useRouter} from "vue-router";
+import {useCheckoutStore} from "stores/checkoutStore.js";
 
 const cartStore = useCartStore();
 const {cart} = storeToRefs(cartStore);
 const $q = useQuasar();
 const selectedItems = ref([]);
+const selectedItemsDetails = computed(() => {
+  return cart.value.filter((item) => selectedItems.value.includes(item.product_id))
+})
+const router = useRouter()
 
 onMounted(() => {
   cartStore.fetchCart();
-  if (cart.value.length > 0) {
-    selectedItems.value = cart.value.map((item) => item.product_id);
-  }
+  // if (cart.value.length > 0) {
+  //   selectedItems.value = cart.value.map((item) => item.product_id);
+  // }
 });
 
 
@@ -316,7 +322,7 @@ const removeItem = (id) => {
   }).onOk(async () => {
     await cartStore.removeItemsFromCart([id]);
     await cartStore.fetchCart();
-    selectedItems.value = selectedItems.value.filter(itemId => itemId !== id);
+      selectedItems.value = selectedItems.value.filter(itemId => itemId !== id);
     $q.notify({
       type: 'positive',
       message: 'Item removed from cart',
@@ -388,7 +394,10 @@ const toggleSelectAll = () => {
     selectedItems.value = []
     return
   }
-  selectedItems.value = cart.value.map((item) => item.product_id)
+  selectedItems.value = cart.value.map((item) => item.product_id).filter(id => {
+    const item = cart.value.find(i => i.product_id === id);
+    return item.product_stock !== 0;
+  });
 }
 
 const selectAll = computed(() => selectedItems.value.length === cart.value.length)
@@ -402,12 +411,11 @@ const selectedTotal = computed(() => {
 
 const allTotal = computed(() => selectedTotal.value > 0 ? selectedTotal.value + 100 : 0)
 
+const checkOutStore = useCheckoutStore()
+const {checkOutProducts} = storeToRefs(checkOutStore);
 const proceedToCheckout = () => {
-  $q.notify({
-    type: 'info',
-    message: 'Proceeding to checkout...',
-    position: 'top',
-    timeout: 2000
-  });
+  checkOutProducts.value = selectedItemsDetails.value
+  localStorage.setItem('checkOutProducts', JSON.stringify(selectedItemsDetails.value));
+  router.push({name: 'CheckoutPage'})
 };
 </script>

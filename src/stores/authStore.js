@@ -1,8 +1,8 @@
-import { defineStore } from "pinia";
-import { publicApi, authApi } from "boot/axios.js";
-import { useQuasar } from "quasar";
-import { ref } from "vue";
-import { useRouter } from "vue-router";
+import {defineStore} from "pinia";
+import {publicApi, authApi} from "boot/axios.js";
+import {useQuasar} from "quasar";
+import {ref} from "vue";
+import {useRouter} from "vue-router";
 
 export const useAuthStore = defineStore('authStore', () => {
     const $q = useQuasar();
@@ -17,7 +17,7 @@ export const useAuthStore = defineStore('authStore', () => {
             localStorage.setItem('access_token', accessToken.value);
             currentUser.value = res.data.user;
 
-            $q.notify({ message: res.data.message, color: "positive" });
+            $q.notify({message: res.data.message, color: "positive"});
             await router.push('/');
             return true;
         } catch (e) {
@@ -36,7 +36,7 @@ export const useAuthStore = defineStore('authStore', () => {
             localStorage.setItem('access_token', accessToken.value);
             currentUser.value = res.data.user;
 
-            $q.notify({ message: res.data.message, color: "positive" });
+            $q.notify({message: res.data.message, color: "positive"});
             await router.push('/');
             return true;
         } catch (e) {
@@ -58,7 +58,7 @@ export const useAuthStore = defineStore('authStore', () => {
             currentUser.value = null;
             localStorage.removeItem('access_token');
             router.push('/');
-            $q.notify({ message: 'Logged out successfully', color: "positive" });
+            $q.notify({message: 'Logged out successfully', color: "positive"});
         }
     };
 
@@ -67,13 +67,38 @@ export const useAuthStore = defineStore('authStore', () => {
         try {
             const res = await authApi.get('/auth/me');
             currentUser.value = res.data.user;
-            console.log('resp',res)
+            console.log('resp', res)
             return true;
         } catch {
             await logout();
             return false;
         }
     };
+
+    const fetchProfile = async () => {
+        try {
+            const res = await authApi.get('/auth/me');
+            currentUser.value = res.data.user;
+        } catch (e) {
+            console.error("Fetch profile failed:", e);
+        }
+    }
+
+
+    const updateProfile = async (payload) => {
+        try {
+            const res = await authApi.put('/auth/update-profile', payload);
+            currentUser.value = res.data.user;
+            $q.notify({message: 'Profile updated successfully', color: "positive"});
+            return true;
+        } catch (e) {
+            $q.notify({
+                message: e.response?.data?.message || "Profile update failed",
+                color: "negative",
+            });
+            return false;
+        }
+    }
 
     return {
         login,
@@ -82,6 +107,8 @@ export const useAuthStore = defineStore('authStore', () => {
         validateToken,
         accessToken,
         currentUser,
+        fetchProfile,
+        updateProfile
 
     };
 });

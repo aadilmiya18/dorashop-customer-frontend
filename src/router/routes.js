@@ -27,6 +27,21 @@ const routes = [
                 name: 'WishlistsPage',
                 component: () => import('pages/WishlistsPage.vue'),
             },
+            {
+                path: '/checkout',
+                name: 'CheckoutPage',
+                component: () => import('pages/CheckoutPage.vue'),
+            },
+            {
+                path: '/esewa/success',
+                name: 'EsewaSuccessPage',
+                component: () => import('pages/EsewaSuccessPage.vue'),
+            },
+            {
+                path: '/esewa/failure',
+                name: 'EsewaFailurePage',
+                component: () => import('pages/EsewaFailurePage.vue'),
+            },
         ]
     },
 
