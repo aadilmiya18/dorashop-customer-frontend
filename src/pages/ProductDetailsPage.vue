@@ -135,6 +135,7 @@
                 flat
                 size="lg"
                 class="tw-px-6 tw-py-4 tw-rounded-xl tw-border-2 tw-border-gray-300 hover:tw-border-red-400 hover:tw-text-red-500 tw-transition-all"
+                @click="addToWishlist"
             />
           </div>
 
@@ -150,6 +151,7 @@ import {computed, onMounted, ref} from "vue";
 import {useRoute} from "vue-router";
 import {storeToRefs} from "pinia";
 import {useCartStore} from "stores/cartStore.js";
+import {useWishlistStore} from "stores/wishlistStore.js";
 
 const quantity = ref(0)
 const showCaseImage = ref('')
@@ -158,6 +160,7 @@ const cartStore = useCartStore();
 
 const productStore = useProductStore()
 const {currentProduct} = storeToRefs(productStore)
+const wishlistStore = useWishlistStore();
 
 const route = useRoute()
 const productSlug = computed(() => route.params.slug)
@@ -176,6 +179,10 @@ const addToCart = async () => {
 
   await cartStore.addItemsToCart(payload)
   await cartStore.fetchCart();
+}
 
+const addToWishlist = async () => {
+  await wishlistStore.addItemsToWishlists(currentProduct.value.id)
+  await wishlistStore.fetchWishlists()
 }
 </script>

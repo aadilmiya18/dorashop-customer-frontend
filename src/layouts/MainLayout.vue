@@ -109,6 +109,7 @@
                 no-caps
                 class="action-btn tw-relative tw-hidden sm:tw-flex tw-text-white hover:tw-bg-white/20"
                 padding="sm md"
+                @click="$router.push({name: 'WishlistsPage'})"
             >
               <q-badge
                   color="pink-5"
@@ -116,7 +117,7 @@
                   rounded
                   class="tw-font-bold"
               >
-                12
+                {{wishlists?.length}}
               </q-badge>
               <q-icon name="mdi-heart" size="24px" class="tw-mr-2"/>
               <span class="tw-font-medium tw-hidden md:tw-inline">Wishlist</span>
@@ -279,12 +280,16 @@ import Login from "components/Login/Login.vue";
 import {useAuthStore} from "stores/authStore.js";
 import {useQuasar} from "quasar";
 import {useCartStore} from "stores/cartStore.js";
+import {useWishlistStore} from "stores/wishlistStore.js";
 
 const authStore = useAuthStore();
 const {currentUser} = storeToRefs(authStore)
 
 const cartStore = useCartStore();
 const {cart} = storeToRefs(cartStore);
+
+const wishlistStore = useWishlistStore();
+const {wishlists} = storeToRefs(wishlistStore)
 
 const mobileMenuOpen = ref(false)
 
@@ -298,6 +303,7 @@ onMounted(() => {
   categoryStore.fetchCategories()
   authStore.validateToken()
   cartStore.fetchCart()
+  wishlistStore.fetchWishlists()
 })
 
 watch(() => categories.value,

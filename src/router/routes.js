@@ -22,6 +22,11 @@ const routes = [
                 name: 'AddToCartPage',
                 component: () => import('pages/AddToCartPage.vue'),
             },
+            {
+                path: '/wishlists',
+                name: 'WishlistsPage',
+                component: () => import('pages/WishlistsPage.vue'),
+            },
         ]
     },
 

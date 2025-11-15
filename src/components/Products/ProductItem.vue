@@ -23,6 +23,7 @@
           icon="mdi-heart-outline"
           class="tw-absolute tw-top-4 tw-right-4 tw-bg-white/90 hover:tw-bg-white tw-shadow-lg tw-backdrop-blur-sm"
           size="sm"
+          @click.stop="addToWishlist"
       >
         <q-tooltip class="tw-bg-blue-grey-8">Add to Wishlist</q-tooltip>
       </q-btn>
@@ -81,6 +82,7 @@
 
 <script setup>
 import {useCartStore} from "stores/cartStore.js";
+import {useWishlistStore} from "stores/wishlistStore.js";
 
 const props = defineProps({
   item: {
@@ -90,6 +92,7 @@ const props = defineProps({
 });
 
 const cartStore = useCartStore();
+const wishlistStore = useWishlistStore();
 
 const addToCart = async () => {
   const payload = {
@@ -101,5 +104,10 @@ const addToCart = async () => {
   await cartStore.addItemsToCart(payload)
   await cartStore.fetchCart();
 
+}
+
+const addToWishlist = async () => {
+  await wishlistStore.addItemsToWishlists(props.item.id)
+  await wishlistStore.fetchWishlists()
 }
 </script>
